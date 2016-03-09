@@ -19,7 +19,6 @@ public class DemoVBox {
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
 		fenetre.setLocation(100,100);
 		
-		//LookAndFeel
 		try{
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 		} catch (Exception e){}
