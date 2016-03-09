@@ -1,0 +1,108 @@
+package partie4;
+
+/**
+ * demovbox.java
+ *
+ * @author <a href="mailto:gery.casiez@lifl.fr">Gery Casiez</a>
+ * @version
+ */
+
+import java.awt.*;
+
+public class VboxLayout implements LayoutManager {
+
+	private int vgap;//espace vertical entre chaque componant
+	private int minWidth = 0, minHeight = 0;//largeur et hauteur minimales du conteneu
+	private int preferredWidth = 0, preferredHeight = 0;// largeur et hauteur preferees du conteneur
+
+	//Les constructeurs
+	public VboxLayout() {this(2);}
+	public VboxLayout(int v) {vgap = v;}
+
+
+	//Méthodes à ne pas remplir
+	public void removeLayoutComponent(Component comp) {}
+	public void addLayoutComponent(String name, Component comp) {}
+
+
+	private void setSizes(Container parent) {
+		int nComps = parent.getComponentCount();//nombre de composants du conteneur
+		preferredWidth = 0;
+		preferredHeight = 0;
+		minWidth = 0;
+		minHeight = 0;
+
+		// Ecrire le code qui permet de calculer les dimensions minimales et
+		// preferees du conteneur en utilisant les dimensions des differents
+		// composants qu'il contient
+		for (int i=0; i < nComps; i++){
+			Component c = parent.getComponent(i);
+
+			minWidth += c.getWidth();
+			minHeight += c.getHeight();
+			
+			preferredHeight = c.getPreferredSize().height;
+			preferredWidth = c.getPreferredSize().width;
+		}
+	}
+
+
+	public Dimension preferredLayoutSize(Container parent) {
+		Dimension dim = new Dimension(0, 0);
+		setSizes(parent);
+
+		if (preferredHeight != 0 && preferredWidth != 0)
+			dim = new Dimension(preferredWidth, preferredHeight);
+		// Retourne les dimensions preferees du conteneur en utilisant
+		// preferredWidth et preferredHeight ainsi que les dimensions du bord
+		// du conteneur (Insets)
+
+		return dim;
+	}
+
+
+	/* Required by LayoutManager. */
+	public Dimension minimumLayoutSize(Container parent) {
+		Dimension dim = new Dimension(0, 0);
+		
+		setSizes(parent);
+
+		if (minHeight != 0 && minWidth != 0)
+			dim = new Dimension(minWidth, minHeight);
+		// Retourne les dimensions minimales du conteneur en utilisant
+		// minWidth et minHeight ainsi que les dimensions du bord
+		// du conteneur (Insets)
+
+		return dim;
+	}
+
+
+	/* Required by LayoutManager. */
+	/*
+	 * This is called when the panel is first displayed,
+	 * and every time its size changes.
+	 * Note: You CAN'T assume preferredLayoutSize or
+	 * minimumLayoutSize will be called -- in the case
+	 * of applets, at least, they probably won't be.
+	 */
+	public void layoutContainer(Container parent) {
+		// Pour tous les composants visibles, definir la position et
+		// la taille de chacun des composants en utilisant la methode
+		// setBounds
+		
+		int n = parent.getComponentCount();
+		
+		for (int i=0; i < n-1; i++){
+			Component c = parent.getComponent(i);
+			if (c.isVisible()){
+				c.setBounds(minWidth, minHeight, preferredWidth, preferredHeight);
+			}
+		}
+	}
+
+
+	public String toString() {
+		String str = "";
+		return getClass().getName() + "[vgap=" + vgap + str + "]";
+	}
+}

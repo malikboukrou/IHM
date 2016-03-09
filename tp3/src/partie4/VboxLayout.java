@@ -10,91 +10,88 @@ package partie4;
 import java.awt.*;
 
 public class VboxLayout implements LayoutManager {
-	
-	// espace vertical entre chaque componant
-	private int vgap;
-	
-	// largeur et hauteur minimales du conteneur
-	private int minWidth = 0, minHeight = 0;
-	
-	// largeur et hauteur preferees du conteneur
-	private int preferredWidth = 0, preferredHeight = 0;
 
-	
-	public VboxLayout() {
-		this(2);
-	}
+	private int vgap;//espace vertical entre chaque componant
+	private int minWidth = 0, minHeight = 0;//largeur et hauteur minimales du conteneu
+	private int preferredWidth = 0, preferredHeight = 0;// largeur et hauteur preferees du conteneur
 
-	public VboxLayout(int v) {
-		vgap = v;
-	}
+	//Les constructeurs
+	public VboxLayout() {this(2);}
+	public VboxLayout(int v) {vgap = v;}
 
-	/* Required by LayoutManager. */
-	public void addLayoutComponent(String name, Component comp) {
-		// Rien a remplir ici
-	}
 
-	/* Required by LayoutManager. */
-	public void removeLayoutComponent(Component comp) {
-		// Rien a remplir ici
-	}
+	//Méthodes à ne pas remplir
+	public void removeLayoutComponent(Component comp) {}
+	public void addLayoutComponent(String name, Component comp) {}
 
-	
+
 	private void setSizes(Container parent) {
-		// nombre de composants du conteneur
-		int nComps = parent.getComponentCount();
-
-		//Reset de preferred/minimum width and height.
+		int nComps = parent.getComponentCount();//nombre de composants du conteneur
 		preferredWidth = 0;
 		preferredHeight = 0;
 		minWidth = 0;
 		minHeight = 0;
 
 		// Ecrire le code qui permet de calculer les dimensions minimales et
-		// preferrees du conteneur en utilisant les dimensions des differents
+		// preferees du conteneur en utilisant les dimensions des differents
 		// composants qu'il contient
+		for (int i=0; i < nComps; i++){
+			Component c = parent.getComponent(i);
 
+			minWidth += c.getWidth();
+			minHeight += c.getHeight();
+
+			preferredHeight += c.getPreferredSize().height + vgap;
+			preferredWidth = Math.max(preferredWidth+vgap, c.getPreferredSize().width+vgap);
+		}
 	}
 
 
-	/* Required by LayoutManager. */
 	public Dimension preferredLayoutSize(Container parent) {
 		Dimension dim = new Dimension(0, 0);
+		setSizes(parent);
+		Insets in = parent.getInsets();
 
-		// Retourne les dimensions preferees du conteneur en utilisant
-		// preferredWidth et preferredHeight ainsi que les dimensions du bord
-		// du conteneur (Insets)
+		if (preferredHeight != 0 && preferredWidth != 0)
+			dim = new Dimension(preferredWidth+in.left+in.right, preferredHeight+in.bottom+in.top);
 
 		return dim;
 	}
 
-	
+
 	/* Required by LayoutManager. */
 	public Dimension minimumLayoutSize(Container parent) {
 		Dimension dim = new Dimension(0, 0);
-		// Retourne les dimensions minimales du conteneur en utilisant
-		// minWidth et minHeight ainsi que les dimensions du bord
-		// du conteneur (Insets)
+		setSizes(parent);
+		Insets in = parent.getInsets();
+
+		if (minHeight != 0 && minWidth != 0)
+			dim = new Dimension(minWidth+in.left+in.right, minHeight+in.bottom+in.top);
 
 		return dim;
 	}
 
-	
-	/* Required by LayoutManager. */
-	/*
-	 * This is called when the panel is first displayed,
-	 * and every time its size changes.
-	 * Note: You CAN'T assume preferredLayoutSize or
-	 * minimumLayoutSize will be called -- in the case
-	 * of applets, at least, they probably won't be.
-	 */
+
 	public void layoutContainer(Container parent) {
-		// Pour tous les composants visibles, definir la position et
-		// la taille de chacun des composants en utilisant la methode
-		// setBounds
+		int nComps = parent.getComponentCount();
+		Insets in = parent.getInsets();
+		int savedHeight = 0;
+		int x = 0, y = in.top;
+
+		for (int i = 0; i < nComps; i++) {
+			Component c = parent.getComponent(i);
+			if (c.isVisible()) {
+				Dimension d = c.getPreferredSize();
+
+				x = (parent.getWidth() / 2) - (d.width / 2);
+				y += savedHeight + vgap;
+				c.setBounds(x, y, d.width, d.height);
+				savedHeight = d.height;
+			}
+		}
 	}
 
-	
+
 	public String toString() {
 		String str = "";
 		return getClass().getName() + "[vgap=" + vgap + str + "]";
