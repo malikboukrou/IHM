@@ -1,0 +1,22 @@
+package tp4;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+
+public class Q1 extends JFrame {
+
+	public Q1(String title){
+		super(title);
+		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+	}
+	
+	
+	public static void main(String args[]){
+		new Q1("Incrémentation");
+	}
+}
